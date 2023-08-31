@@ -1,6 +1,7 @@
 // importando modulos
 import express from 'express';
 const app = express();
+import cors from "cors";
 // conectando ao database
 import connectDataBase from "./src/db/db.js";
 
@@ -20,8 +21,8 @@ connectDataBase();
 
 // configurando as rotas para uso
 app.use(express.json());
-
-app.use("/user", corsAuth, userRouter);
+app.use(cors());
+app.use("/user", userRouter);
 
 // executando o servidor
 app.listen(port, () => console.log(`Servidor rodando na port ${port}`));
