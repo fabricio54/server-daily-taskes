@@ -5,6 +5,7 @@ const app = express();
 import connectDataBase from "./src/db/db.js";
 
 // importando rotas
+import { corsAuth } from './src/middlewares/cors.middleware.js';
 import userRouter from "./src/routes/user.router.js";
 
 // configurando o dotenv (uso de variáveis globais)
@@ -20,7 +21,7 @@ connectDataBase();
 // configurando as rotas para uso
 app.use(express.json());
 
-app.use("/user", userRouter);
+app.use("/user", corsAuth, userRouter);
 
 // executando o servidor
 app.listen(port, () => console.log(`Servidor rodando na port ${port}`));
