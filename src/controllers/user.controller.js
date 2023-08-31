@@ -21,7 +21,7 @@ export const userCreateController = async (req, res) => {
         }
 
         // mostrando o usuário criado na tela
-        res.status(200).send({
+        res.send({
             message: "usuário criado com sucesso",
             user: {
                 name,
