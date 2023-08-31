@@ -6,7 +6,6 @@ import cors from "cors";
 import connectDataBase from "./src/db/db.js";
 
 // importando rotas
-import { corsAuth } from './src/middlewares/cors.middleware.js';
 import userRouter from "./src/routes/user.router.js";
 
 // configurando o dotenv (uso de variáveis globais)
