@@ -7,11 +7,11 @@ export const userCreateController = async (req, res) => {
 
         // validando dados
         if (!name || !username || !email || !password) {
-            res.status(400).send({ message: "Envie todos os campos para registro" });
+            return res.status(400).send({ message: "Envie todos os campos para registro" });
         }
 
         // criando um serviço para criação de contas de usuários
-        const user = await userCreateService(req.body);
+        const user = await userCreateService({name, username, email, password});
 
         // verificando se o usuário e válido
         if (!user) {
@@ -21,7 +21,7 @@ export const userCreateController = async (req, res) => {
         }
 
         // mostrando o usuário criado na tela
-        res.send({
+        return res.send({
             message: "usuário criado com sucesso",
             user: {
                 name,
