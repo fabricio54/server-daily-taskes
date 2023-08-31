@@ -4,7 +4,7 @@ const router = Router();
 
 import { userCreateController } from "../controllers/user.controller.js";
 
-router.post("/", userCreateController);
+router.post("/cadastro", userCreateController);
 
 export default router;
 
