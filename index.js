@@ -3,10 +3,10 @@ import express from 'express';
 const app = express();
 import cors from "cors";
 // conectando ao database
-import connectDataBase from "./db/db.js";
+import connectDataBase from "./src/db/db.js";
 
 // importando rotas
-import userRouter from "./routes/user.router.js";
+import userRouter from "./src/routes/user.router.js";
 
 // configurando o dotenv (uso de variáveis globais)
 import dotenv from "dotenv";
