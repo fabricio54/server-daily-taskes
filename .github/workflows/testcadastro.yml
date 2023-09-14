@@ -1,0 +1,61 @@
+name: Execução de testes de funções de cadastros
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 9, 11, 15, 18 * * 1,2,3,4,5'
+
+  jobs:
+    teste-01:
+      runs-on: windows-latest
+
+      steps:
+        - name: Checkout projeto
+          uses: actions/checkout@v2
+
+        - name: Setup Node.js environment
+          uses: actions/setup-node@v2.2.0
+          with:
+            node-versions: ${{ matrix.node.version }}
+
+        - name: Install dependecies
+          run: npm install
+
+        - name: 
+
+
+
+
+name: Execução de testes Jest
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 9, 11, 15, 18 * * 1,2,3,4,5'
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v2
+
+      - name: Configurar ambiente Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '${{ matrix.node.version }}'  # Versão do Node.js a ser usada
+
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Executar testes Jest
+        run: npx jest
