@@ -38,7 +38,7 @@ export const userCreateController = async (req, res) => {
     }
 }
 
-export const isEmailValid = async (req, res) => {
+export const isEmailValid = async (req, res, next) => {
     try {
         // pegando os dados do usuário no body
         const { name, email } = req.body;
@@ -59,15 +59,16 @@ export const isEmailValid = async (req, res) => {
         })
             .then(() => {
                 console.log("email enviado com sucesso!");
-                res.status(200).send({
-                    codigo: codigo
-                })
             })
             .catch((error) => console.log(error));
 
+    return res.send({
+        codigo: codigo
+    });
     } catch (error) {
         res.status(500).send({
             message: error.message
         })
     }
+    
 }

@@ -6,6 +6,7 @@ import connectDataBase from "./src/db/db.js";
 
 // importando rotas
 import userRouter from "./src/routes/user.router.js";
+import authRouter from "./src/routes/auth.router.js"
 
 // configurando o dotenv (uso de variáveis globais)
 import dotenv from "dotenv";
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
     next();
 })
 app.use("/user", userRouter);
+app.use("/auth", authRouter);
 
 
 // executando o servidor
