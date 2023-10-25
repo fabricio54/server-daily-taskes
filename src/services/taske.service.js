@@ -10,7 +10,12 @@ export const getTaskeUserById = (iduser, id) => Taskes.find({ iduser: iduser, _i
 
 export const deleteTaskeById = (id) => Taskes.findByIdAndDelete(id);
 
-export const updateTaske = (id, name, description ) => Taskes.findOneAndUpdate({ _id: id }, { name, description }, { rawResult: true });
+export const updateTaske = (id, name, description ) => Taskes.findOneAndUpdate({ _id: id }, { name, description });
+
+export const updateStatus = (id, status) => Taskes.find({ _id: id, status: !status });
+
+
+
 
 
 

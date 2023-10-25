@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske } from "../services/taske.service.js"
+import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske, updateStatus, getTaskeById } from "../services/taske.service.js"
 const ObjectId = mongoose.Types.ObjectId;
 
 export const controllerCreateTaske = async (req, res) => {
@@ -111,6 +111,34 @@ export const controllerUpdateTaske = async (req, res) => {
             message: "taske update succefuly"
         })
 
+        
+    } catch (error) {
+        res.status(500).send({
+            error: error.message
+        })
+    }
+}
+
+export const controllerUpdateStatus = async (req, res) => {
+    try {
+        const id = req.id;
+
+        const response = await getTaskeById(id);
+
+        if(!response) {
+            res.status(401).send({
+                message: "taske updated succefully!"
+            })
+        }
+
+        const statusAtual = response.status;
+        console.log(statusAtual)
+
+        const status = await updateStatus(id, statusAtual);
+
+        res.send({
+            taske: status
+        })
         
     } catch (error) {
         res.status(500).send({
