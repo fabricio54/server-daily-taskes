@@ -1,4 +1,5 @@
 import { validPasswordModule } from "../services/functionSimples.js";
+import { getTaskeById } from "../services/taske.service.js";
 
 export const validUser = (req, res, next) => {
     try {
@@ -14,5 +15,34 @@ export const validUser = (req, res, next) => {
         next();
     } catch (error) {
         res.status(500).send({ error: error.message });
+    }
+}
+
+export const validIdTaske = async (req, res, next) => {
+    try {
+        const id = req.query.id;
+
+        if(!id) {
+            res.send({
+                message: "taske not found"
+            })
+        }
+
+        const response = await getTaskeById(id);
+
+        if(!response) {
+            res.send({
+                message: "id taske not found"
+            })
+        }
+
+        req.id = id;
+
+        next();
+
+    } catch (error) {
+        res.status(500).send({
+            error: error.message
+        })
     }
 }
