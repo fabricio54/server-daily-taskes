@@ -3,7 +3,7 @@ const router = Router();
 
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 import { validIdTaske } from "../middlewares/global.middleware.js";
-import { controllerCreateTaske, controllerGetAllTaske, controllerDeleteTaske, controllerUpdateStatus , controllerUpdateTaske} from "../controllers/taske.controller.js";
+import { controllerCreateTaske, controllerGetAllTaske, controllerDeleteTaske, controllerUpdateStatus , controllerUpdateTaske, controllerUpdateProfile} from "../controllers/taske.controller.js";
 
 
 router.post("/create", authMiddleware, controllerCreateTaske);
@@ -12,5 +12,6 @@ router.get("/", authMiddleware, controllerGetAllTaske);
 router.patch("/update", validIdTaske, authMiddleware, controllerUpdateTaske);
 router.delete("/delete", validIdTaske, authMiddleware, controllerDeleteTaske);
 router.put("/statustaske", validIdTaske, authMiddleware, controllerUpdateStatus);
+router.patch("/updateuser", authMiddleware, controllerUpdateProfile);
 
 export default router;

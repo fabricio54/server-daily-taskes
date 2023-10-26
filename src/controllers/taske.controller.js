@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske, updateStatus, getTaskeById } from "../services/taske.service.js"
+import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske, updateStatus, getTaskeById, updateProfile } from "../services/taske.service.js"
 const ObjectId = mongoose.Types.ObjectId;
 
 export const controllerCreateTaske = async (req, res) => {
@@ -131,8 +131,13 @@ export const controllerUpdateStatus = async (req, res) => {
             })
         }
 
-        const statusAtual = response.status;
-        console.log(statusAtual)
+        let statusAtual;
+
+        if(response.status === true) {
+            statusAtual = false;
+        }else{
+            statusAtual = true;
+        }
 
         const status = await updateStatus(id, statusAtual);
 
@@ -140,6 +145,30 @@ export const controllerUpdateStatus = async (req, res) => {
             taske: status
         })
         
+    } catch (error) {
+        res.status(500).send({
+            error: error.message
+        })
+    }
+}
+
+export const controllerUpdateProfile = async (req, res) => {
+    try {
+        const { name, username } = req.body;
+        const iduser = req.userId;
+
+        if(!name || !username) {
+            res.status(404).send({
+                message: "preencha ao menos um campo"
+            })
+        }
+
+        const response = await updateProfile(iduser, {name, username});
+
+        res.send({
+            user: response
+        })
+
     } catch (error) {
         res.status(500).send({
             error: error.message
