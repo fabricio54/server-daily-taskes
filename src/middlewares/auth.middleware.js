@@ -21,7 +21,7 @@ export const authMiddleware = (req, res, next) => {
 
         // vericando se o arrays parts tem um tamanho de 2
         if(parts.length !== 2) {
-            res.status(401).send({ message: "invalid lenght"});
+            return res.status(401).send({ message: "invalid lenght"});
         }
 
         // descontroindo esse array
@@ -29,7 +29,7 @@ export const authMiddleware = (req, res, next) => {
 
         // verificando o valor de schema
         if(schema !== "Bearer") {
-            res.send(401);
+            return res.send(401);
         }
 
         // validando o token

@@ -9,21 +9,20 @@ export const controllerCreateTaske = async (req, res) => {
 
         console.log(name, description, iduser)
 
-        if(!name && !description && !iduser) {
-            res.status(404).send({
+        if(!name && !description) {
+            return res.status(404).send({
                 message: "preencha todos os campos"
             });
         }
 
         const response = await createTaske({name, description, iduser});
-        console.log(response)
 
         if(!response) {
-            res.status(404).send({
+            console.log('cu')
+            return res.status(404).send({
                 error: response.error
             })
         }
-
 
         res.status(200).send({
         message: "taske criada com sucesso!",
@@ -50,18 +49,12 @@ export const controllerGetAllTaske = async (req, res) => {
         const response = await getAllTaske(userId);
         console.log(response);
 
-        if(response.length < 1) {
-            return res.send({
-                message: "not found taske"
-            })
-        }
-
         res.send({
             taske: response  
         });
 
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).send({
             message: error.message
         })
     }
@@ -74,25 +67,34 @@ export const controllerDeleteTaske = async (req, res) => {
 
         const taske = await getTaskeUserById(iduser, id);
 
-        if(!taske) {
-            res.status(404).send({
-                message: "taske not found by id"
-            })
+        if (!taske) {
+            return res.status(404).send({
+                message: "Task not found by ID"
+            });
         }
 
-        await deleteTaskeById(id);
+        const response = await deleteTaskeById(id);
 
+        // Aqui você está enviando uma resposta
         res.send({
-            message: "task del for succely!"
-        })
+            message: "Task deleted successfully!",
+            taske: response
+        });
 
-        
+        // Após enviar a resposta, retorne para encerrar a função
+        return;
     } catch (error) {
+        // Aqui você pode manipular erros e enviar uma única resposta de erro
         res.status(500).send({
             error: error.message
-        })
+        });
+
+        // Após enviar a resposta de erro, retorne para encerrar a função
+        return;
     }
 }
+
+
 
 export const controllerUpdateTaske = async (req, res) => {
     try {
@@ -100,7 +102,7 @@ export const controllerUpdateTaske = async (req, res) => {
         const id = req.id;
 
         if(!name && !description) {
-            res.status(401).send({
+            return res.status(401).send({
                 message: "fill in at least one field"
             })
         }
@@ -113,7 +115,7 @@ export const controllerUpdateTaske = async (req, res) => {
 
         
     } catch (error) {
-        res.status(500).send({
+        return res.status(500).send({
             error: error.message
         })
     }
