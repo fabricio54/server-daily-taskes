@@ -8,7 +8,7 @@ export const validUser = (req, res, next) => {
         const passwordValid = validPasswordModule(password);
 
         if(!passwordValid && !(password.length >= 8 && password.length <= 12 ) ) {
-            res.status(400).send({
+            return res.status(400).send({
                 message: "Senha deve estar entre 8 e 12 caracters e conter ao menos um caracter especial"
             })
         }
@@ -23,7 +23,7 @@ export const validIdTaske = async (req, res, next) => {
         const id = req.query.id;
 
         if(!id) {
-            res.send({
+            return res.send({
                 message: "taske not found"
             })
         }
@@ -31,7 +31,7 @@ export const validIdTaske = async (req, res, next) => {
         const response = await getTaskeById(id);
 
         if(!response) {
-            res.send({
+           return res.send({
                 message: "id taske not found"
             })
         }

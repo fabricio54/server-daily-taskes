@@ -17,6 +17,8 @@ export const updateStatus = (id, status) => Taskes.updateOne({ _id: id }, { $set
 
 export const updateProfile = (iduser, {name, username }) => User.findByIdAndUpdate({ _id: iduser }, { name, username });
 
+export const findAllTaskesFinish = (iduser) => Taskes.find({ iduser: iduser, status: true }).count();
+
 
 
 

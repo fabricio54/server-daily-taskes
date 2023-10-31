@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske, updateStatus, getTaskeById, updateProfile } from "../services/taske.service.js"
+import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske, updateStatus, getTaskeById, updateProfile, findAllTaskesFinish } from "../services/taske.service.js"
 const ObjectId = mongoose.Types.ObjectId;
 
 export const controllerCreateTaske = async (req, res) => {
@@ -18,7 +18,7 @@ export const controllerCreateTaske = async (req, res) => {
         const response = await createTaske({name, description, iduser});
 
         if(!response) {
-            console.log('cu')
+            console.log('passou')
             return res.status(404).send({
                 error: response.error
             })
@@ -160,7 +160,7 @@ export const controllerUpdateProfile = async (req, res) => {
         const iduser = req.userId;
 
         if(!name || !username) {
-            res.status(404).send({
+            return res.status(404).send({
                 message: "preencha ao menos um campo"
             })
         }
@@ -173,6 +173,28 @@ export const controllerUpdateProfile = async (req, res) => {
 
     } catch (error) {
         res.status(500).send({
+            error: error.message
+        })
+    }
+}
+
+export const controllerGetAllTaskesFinish = async (req, res) => {
+    try {
+        const iduser = req.userId;
+
+        const response = await findAllTaskesFinish(iduser);
+
+        //if(response === 0) {
+            //return res.send({
+                //mensage: "Não tem tarefas no momento"
+            //})
+        //}
+
+        res.send({
+            total: response
+        })
+    } catch (error) {
+        res.send({
             error: error.message
         })
     }
