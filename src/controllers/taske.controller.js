@@ -1,23 +1,24 @@
 import mongoose from "mongoose";
-import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske, updateStatus, getTaskeById, updateProfile, findAllTaskesFinish } from "../services/taske.service.js"
+import { createTaske, getAllTaske, getTaskeUserById, deleteTaskeById, updateTaske, updateStatus, getTaskeById, updateProfile, findAllTaskesFinish, getAllTaskGeneral, findSearchTaske, findAllTaskeWhithFinish, findAllTaskeWhithPendent } from "../services/taske.service.js"
+import { findById, findAllId, findUpdateEmail } from "../services/user.service.js";
 const ObjectId = mongoose.Types.ObjectId;
 
 export const controllerCreateTaske = async (req, res) => {
     try {
-        const { name, description} = req.body;
+        const { name, description } = req.body;
         const iduser = req.userId;
 
         console.log(name, description, iduser)
 
-        if(!name && !description) {
+        if (!name && !description) {
             return res.status(404).send({
                 message: "preencha todos os campos"
             });
         }
 
-        const response = await createTaske({name, description, iduser});
+        const response = await createTaske({ name, description, iduser });
 
-        if(!response) {
+        if (!response) {
             console.log('passou')
             return res.status(404).send({
                 error: response.error
@@ -25,10 +26,10 @@ export const controllerCreateTaske = async (req, res) => {
         }
 
         res.status(200).send({
-        message: "taske criada com sucesso!",
-        taske: response
+            message: "taske criada com sucesso!",
+            taske: response
         })
-        
+
     } catch (error) {
         res.status(500).send({
             message: error.message
@@ -40,7 +41,7 @@ export const controllerGetAllTaske = async (req, res) => {
     try {
         const userId = req.userId;
 
-        if(!userId) {
+        if (!userId) {
             return res.status(404).send({
                 message: "user is not found"
             })
@@ -50,7 +51,7 @@ export const controllerGetAllTaske = async (req, res) => {
         console.log(response);
 
         res.send({
-            taske: response  
+            taske: response
         });
 
     } catch (error) {
@@ -94,14 +95,12 @@ export const controllerDeleteTaske = async (req, res) => {
     }
 }
 
-
-
 export const controllerUpdateTaske = async (req, res) => {
     try {
         const { name, description } = req.body;
         const id = req.id;
 
-        if(!name && !description) {
+        if (!name && !description) {
             return res.status(401).send({
                 message: "fill in at least one field"
             })
@@ -113,7 +112,7 @@ export const controllerUpdateTaske = async (req, res) => {
             message: "taske update succefuly"
         })
 
-        
+
     } catch (error) {
         return res.status(500).send({
             error: error.message
@@ -127,7 +126,7 @@ export const controllerUpdateStatus = async (req, res) => {
 
         const response = await getTaskeById(id);
 
-        if(!response) {
+        if (!response) {
             res.status(401).send({
                 message: "taske updated succefully!"
             })
@@ -135,9 +134,9 @@ export const controllerUpdateStatus = async (req, res) => {
 
         let statusAtual;
 
-        if(response.status === true) {
+        if (response.status === true) {
             statusAtual = false;
-        }else{
+        } else {
             statusAtual = true;
         }
 
@@ -146,7 +145,7 @@ export const controllerUpdateStatus = async (req, res) => {
         res.send({
             taske: status
         })
-        
+
     } catch (error) {
         res.status(500).send({
             error: error.message
@@ -156,16 +155,16 @@ export const controllerUpdateStatus = async (req, res) => {
 
 export const controllerUpdateProfile = async (req, res) => {
     try {
-        const { name, username } = req.body;
+        const { name, username, email } = req.body;
         const iduser = req.userId;
 
-        if(!name || !username) {
+        if (!name || !username || !email) {
             return res.status(404).send({
                 message: "preencha ao menos um campo"
             })
         }
 
-        const response = await updateProfile(iduser, {name, username});
+        const response = await updateProfile(iduser, { name, username, email });
 
         res.send({
             user: response
@@ -185,9 +184,9 @@ export const controllerGetAllTaskesFinish = async (req, res) => {
         const response = await findAllTaskesFinish(iduser);
 
         //if(response === 0) {
-            //return res.send({
-                //mensage: "Não tem tarefas no momento"
-            //})
+        //return res.send({
+        //mensage: "Não tem tarefas no momento"
+        //})
         //}
 
         res.send({
@@ -200,4 +199,160 @@ export const controllerGetAllTaskesFinish = async (req, res) => {
     }
 }
 
+export const atualizaTarefaEmTempo = async () => {
+    try {
+        const verificaEAtualiza = 24 * 60 * 60 * 1000;
+        const dataTempoAgora = new Date();
+        const taskeGetAll = await getAllTaskGeneral();
 
+        taskeGetAll.forEach(async (taske) => {
+            console.log(taske.createAt - dataTempoAgora, dataTempoAgora);
+            if (dataTempoAgora - taske.createAt >= verificaEAtualiza) {
+                // Atualiza o status
+                await updateStatus(taske._id, true);
+                console.log(`taske: ${taske}`);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+export const controllerSearchTaske = async (req, res) => {
+    try {
+        const name = req.query.name
+        const userId = req.userId
+
+        if (!userId) {
+            return res.send({
+                message: "user not fond"
+            })
+        }
+
+        const searchTaske = await findSearchTaske(userId, name)
+
+        console.log(searchTaske, name)
+
+        if (searchTaske.length === 0) {
+            return res.status(400).send({
+                taske: searchTaske
+            })
+        }
+
+        res.status(200).send({
+            taskes: searchTaske
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            error: error.message
+        })
+    }
+}
+
+export const controllerAllFinishTaske = async (req, res) => {
+    try {
+        const iduser = req.userId
+
+        if (!iduser) {
+            return res.status(404).send({
+                message: "not found iduser"
+            })
+        }
+
+        const taskeFinish = await findAllTaskeWhithFinish(iduser)
+
+        if (taskeFinish === 0) {
+            return res.status(400).send({
+                taskeFinish: taskeFinish
+            })
+        }
+
+        res.status(200).send({
+            taskes: taskeFinish
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            error: error.message
+        })
+    }
+}
+
+export const controllerGetAllTaskePendent = async (req, res) => {
+    try {
+
+        const userId = req.userId
+
+        if (!userId) {
+            return res.status(400).send({
+                message: "userId not found"
+            })
+        }
+
+        const taskePendent = await findAllTaskeWhithPendent(userId)
+
+        if (taskePendent.length === 0) {
+            return res.status(400).send({
+                taskePendent: taskePendent
+            })
+        }
+        res.status(200).send({
+            taskes: taskePendent
+        })
+    } catch (error) {
+        return res.status(500).send({
+            error: error.message
+        })
+    }
+}
+
+export const controllerGetEmail = async (req, res) => {
+    try {
+        const userId = req.userId
+        const { email } = req.body
+
+        if (!userId) {
+            return res.status(400).send({
+                message: "user id not found"
+            })
+        }
+
+        const users = await findAllId()
+
+
+        if (!users) {
+            return res.status(400).send({
+                message: "There is no user registered in the system"
+            })
+        }
+
+        users.map((user) => {
+            if (user.email === email) {
+                return res.status(401).send({
+                    error: "email already exists in the system"
+                })
+            }
+            console.log('passou')
+        })
+
+        await findUpdateEmail(userId, email)
+
+        const user = await findById(userId)
+
+        if (!user) {
+            return res.status(400).send({
+                message: "User not found"
+            })
+        }
+
+        res.status(200).send({
+            user: user
+        })
+
+    } catch (error) {
+        return res.status(500).send({
+            error: error.message
+        })
+    }
+}

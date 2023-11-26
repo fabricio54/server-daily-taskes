@@ -3,6 +3,8 @@ import express from 'express';
 const app = express();
 // conectando ao database
 import connectDataBase from "./src/db/db.js";
+import { atualizaTarefaEmTempo } from './src/controllers/taske.controller.js';
+import cron from 'node-cron';
 
 // importando rotas
 import userRouter from "./src/routes/user.router.js";
@@ -26,6 +28,9 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
+})
+cron.schedule('* * * * *', () => {
+    atualizaTarefaEmTempo()
 })
 app.use("/user", userRouter);
 app.use("/taske", taskeRouter);
